@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
             next()
         })
     } else {
-        return res.status(401).json("You are not authenticated")
+        return res.status(401).json("You are not authorized")
     }
 }
 
@@ -24,4 +24,14 @@ const tokenAuthorization = (req, res, next) => {
     })
 }
 
-module.exports = {verifyToken, tokenAuthorization}
+const adminAuthorization = (req, res, next) => {
+    verifyToken(req, res, () => {
+        if (req.user.isAdmin) {
+            next()
+        } else {
+            return res.status(403).json("Not allowed")
+        }
+    })
+}
+
+module.exports = {verifyToken, tokenAuthorization, adminAuthorization}
