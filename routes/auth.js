@@ -25,8 +25,9 @@ router.post("/login", async (req, res) => {
         // CHECK PASSWORD
         const originalPassword = CryptoJS.AES.decrypt(user.password, process.env.PASSWORD_SECRET).toString(CryptoJS.enc.Utf8)
         if (originalPassword !== req.body.password) return res.status(401).json("Wrong password")
-        // ALL GOOD ? SEND RESPONSE
+        // SIGN TOKEN
         const accessToken = JWT.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET, {expiresIn: "3d"})
+        // SEND RESPONSE
         const {password, ...otherUserData} = user._doc;
         return res.status(200).json({accessToken, ...otherUserData})
     } catch(error) {

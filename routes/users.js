@@ -2,7 +2,7 @@ const router = require("express").Router()
 const User = require("../models/User")
 const { tokenAuthorization, adminAuthorization } = require("./verifyToken")
 
-// USER STATS
+// GET STATS
 router.get("/stats", adminAuthorization, async (req, res) => {
     const date = new Date()
     const lastYear = new Date(date.setFullYear(date.getFullYear() - 1))
@@ -12,7 +12,7 @@ router.get("/stats", adminAuthorization, async (req, res) => {
             {$project: {month: {$month: "$createdAt"}}},
             {$group: {_id: "$month", total: {$sum: 1}}}
         ])
-        res.status(200).json(data)
+        return res.status(200).json(data)
     } catch (error) {
         return res.status(500).json(error)
     }
