@@ -2,6 +2,7 @@ const router = require("express").Router()
 const Order = require("../models/Order")
 const { verifyToken, adminAuthorization } = require("./verifyToken")
 
+// GET REVENUE
 router.get("/revenue", adminAuthorization, async (req, res) => {
     const date = new Date()
     const lastMonth = new Date(date.setMonth(date.getMonth() - 1))
@@ -18,6 +19,7 @@ router.get("/revenue", adminAuthorization, async (req, res) => {
     }
 })
 
+// ADD ORDER
 router.post("/", verifyToken, async (req, res) => {
     const newOrder = new Order(req.body)
     try {
@@ -28,6 +30,7 @@ router.post("/", verifyToken, async (req, res) => {
     }
 })
 
+// EDIT ORDER
 router.put("/:id", adminAuthorization, async (req, res) => {
     try {
         const updatedOrder = await Order.findByIdAndUpdate(req.params.id, {
@@ -39,6 +42,7 @@ router.put("/:id", adminAuthorization, async (req, res) => {
     }
 })
 
+// DELETE ORDER
 router.delete("/:id", adminAuthorization, async (req, res) => {
     try {
         await Order.findByIdAndDelete(req.params.id)
@@ -48,6 +52,7 @@ router.delete("/:id", adminAuthorization, async (req, res) => {
     }
 })
 
+// GET ORDER
 router.get("/:userId", async (req, res) => {
     try {
         const orders = await Order.find({userId: req.params.userId})
@@ -57,6 +62,7 @@ router.get("/:userId", async (req, res) => {
     }
 })
 
+// GET ALL ORDERS
 router.get("/", adminAuthorization, async (req, res) => {
     try {
         const orders = await Order.find()
