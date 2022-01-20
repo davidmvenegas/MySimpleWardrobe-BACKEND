@@ -53,10 +53,9 @@ router.get("/:id", adminAuthorization, async (req, res) => {
 })
 
 // GET ALL USERS
-router.get("/", adminAuthorization, async (req, res) => {
-    const query = req.query.new
+router.get("/", async (req, res) => {
     try {
-        const users = query ? await User.find().sort({_id: -1}).limit(5) : await User.find()
+        const users = await User.find()
         return res.status(200).json(users)
     } catch (error) {
         return res.status(500).json(error)
