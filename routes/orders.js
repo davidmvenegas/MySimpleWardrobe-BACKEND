@@ -4,12 +4,13 @@ const { verifyToken, adminAuthorization } = require("./verifyToken")
 
 // GET REVENUE
 router.get("/revenue", adminAuthorization, async (req, res) => {
+    const productID = req.query.pid
     const date = new Date()
     const lastMonth = new Date(date.setMonth(date.getMonth() - 1))
     const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1))
     try {
         const revenue = await Order.aggregate([
-            {$match: {createdAt: {$gte: previousMonth}}},
+            {$match: {createdAt: {$gte: previousMonth}, ...(productID && {products:{$elemMatch: {productID}}})}},
             {$project: {month: {$month: "$createdAt"}, sales: "$amount"}},
             {$group: {_id: "$month", total: {$sum: "$sales"}}}
         ])
