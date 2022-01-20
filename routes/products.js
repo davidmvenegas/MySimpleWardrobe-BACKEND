@@ -14,7 +14,7 @@ router.post("/", adminAuthorization, async (req, res) => {
 })
 
 // UPDATE PRODUCT
-router.put("/:id", adminAuthorization, async (req, res) => {
+router.patch("/:id", adminAuthorization, async (req, res) => {
     try {
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, {
             $set: req.body

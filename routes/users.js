@@ -1,5 +1,6 @@
 const router = require("express").Router()
 const User = require("../models/User")
+const CryptoJS = require("crypto-js")
 const { tokenAuthorization, adminAuthorization } = require("./verifyToken")
 
 // GET STATS
@@ -19,7 +20,7 @@ router.get("/stats", adminAuthorization, async (req, res) => {
 })
 
 // UPDATE USER
-router.put("/:id", tokenAuthorization, async (req, res) => {
+router.patch("/:id", tokenAuthorization, async (req, res) => {
     if(req.body.password) req.body.password = CryptoJS.AES.encrypt(req.body.password, process.env.PASSWORD_SECRET).toString()
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
