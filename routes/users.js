@@ -20,7 +20,7 @@ router.get("/stats", adminAuthorization, async (req, res) => {
 })
 
 // UPDATE USER
-router.patch("/:id", tokenAuthorization, async (req, res) => {
+router.patch("/:id", async (req, res) => {
     if(req.body.password) req.body.password = CryptoJS.AES.encrypt(req.body.password, process.env.PASSWORD_SECRET).toString()
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
