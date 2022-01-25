@@ -4,6 +4,7 @@ const CryptoJS = require("crypto-js")
 const JWT = require("jsonwebtoken")
 
 router.post("/register", async (req, res) => {
+    // CREATE NEW USER
     const newUser = new User({
         username: req.body.username,
         email: req.body.email,
@@ -12,7 +13,11 @@ router.post("/register", async (req, res) => {
     })
     try {
         const savedUser = await newUser.save()
-        return res.status(201).json(savedUser)
+        // SIGN TOKEN
+        const accessToken = JWT.sign({id: savedUser._id, isAdmin: savedUser.isAdmin}, process.env.JWT_SECRET, {expiresIn: "3d"})
+        // SEND RESPONSE
+        const {password, ...otherUserData} = savedUser._doc;
+        return res.status(201).json({accessToken, ...otherUserData})
     } catch(e) {
         return res.status(500).json(e)
     }
@@ -21,7 +26,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         // CHECK USERNAME
-        const user = await User.findOne({username: req.body.username})
+        const user = await User.findOne({email: req.body.email})
         if (!user) return res.status(401).json("Username not found")
         // CHECK PASSWORD
         const originalPassword = CryptoJS.AES.decrypt(user.password, process.env.PASSWORD_SECRET).toString(CryptoJS.enc.Utf8)
