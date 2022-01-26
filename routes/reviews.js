@@ -5,6 +5,8 @@ const Review = require("../models/Review")
 router.post("/", async (req, res) => {
     const newReview = new Review(req.body)
     try {
+        const productId = await Review.findOne({productId: req.body.productId})
+        if (productId) return res.status(401).json("Duplicate Product")
         const savedReview = await newReview.save()
         res.status(200).json(savedReview)
     } catch (error) {
@@ -13,11 +15,10 @@ router.post("/", async (req, res) => {
 })
 
 // UPDATE REVIEW
-router.patch("/:id", async (req, res) => {
+router.patch("/:productId", async (req, res) => {
     try {
-        const updatedReview = await Review.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        }, {new: true})
+        const filter = {productId: req.params.productId}
+        const updatedReview = await Review.findOneAndUpdate(filter, req.body, {new: true})
         return res.status(200).json(updatedReview)
     } catch (error) {
         return res.status(500).json(error)
@@ -35,9 +36,9 @@ router.delete("/:id", async (req, res) => {
 })
 
 // GET SINGLE REVIEW
-router.get("/:userId", async (req, res) => {
+router.get("/:productId", async (req, res) => {
     try {
-        const review = await Review.findOne({userId: req.params.userId})
+        const review = await Review.findOne({productId: req.params.productId})
         return res.status(200).json(review)
     } catch (error) {
         return res.status(500).json(error)

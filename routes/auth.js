@@ -12,6 +12,10 @@ router.post("/register", async (req, res) => {
         isAdmin: req.body.isAdmin
     })
     try {
+        // CHECK EMAIL
+        const email = await User.findOne({email: req.body.email})
+        if (email) return res.status(401).json("Email already taken")
+        // CREATE USER
         const savedUser = await newUser.save()
         // SIGN TOKEN
         const accessToken = JWT.sign({id: savedUser._id, isAdmin: savedUser.isAdmin}, process.env.JWT_SECRET, {expiresIn: "3d"})
@@ -27,7 +31,7 @@ router.post("/login", async (req, res) => {
     try {
         // CHECK USERNAME
         const user = await User.findOne({email: req.body.email})
-        if (!user) return res.status(401).json("Username not found")
+        if (!user) return res.status(401).json("Email not found")
         // CHECK PASSWORD
         const originalPassword = CryptoJS.AES.decrypt(user.password, process.env.PASSWORD_SECRET).toString(CryptoJS.enc.Utf8)
         if (originalPassword !== req.body.password) return res.status(401).json("Wrong password")
