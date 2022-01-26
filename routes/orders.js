@@ -2,6 +2,27 @@ const router = require("express").Router()
 const Order = require("../models/Order")
 const { verifyToken, adminAuthorization } = require("./verifyToken")
 
+
+// GET ORDER
+router.get("/:userId", async (req, res) => {
+    try {
+        const orders = await Order.find({userId: req.params.userId})
+        return res.status(200).json(orders)
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+})
+
+// GET ALL ORDERS
+router.get("/", async (req, res) => {
+    try {
+        const orders = await Order.find()
+        return res.status(200).json(orders)
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+})
+
 // GET REVENUE
 router.get("/revenue", adminAuthorization, async (req, res) => {
     const productID = req.query.pid
@@ -48,26 +69,6 @@ router.delete("/:id", adminAuthorization, async (req, res) => {
     try {
         await Order.findByIdAndDelete(req.params.id)
         return res.status(200).json("Order has been deleted")
-    } catch (error) {
-        return res.status(500).json(error)
-    }
-})
-
-// GET ORDER
-router.get("/:userId", async (req, res) => {
-    try {
-        const orders = await Order.find({userId: req.params.userId})
-        return res.status(200).json(orders)
-    } catch (error) {
-        return res.status(500).json(error)
-    }
-})
-
-// GET ALL ORDERS
-router.get("/", adminAuthorization, async (req, res) => {
-    try {
-        const orders = await Order.find()
-        return res.status(200).json(orders)
     } catch (error) {
         return res.status(500).json(error)
     }
