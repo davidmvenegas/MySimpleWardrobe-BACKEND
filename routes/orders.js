@@ -42,7 +42,7 @@ router.get("/revenue", adminAuthorization, async (req, res) => {
 })
 
 // ADD ORDER
-router.post("/", verifyToken, async (req, res) => {
+router.post("/", async (req, res) => {
     const newOrder = new Order(req.body)
     try {
         const savedOrder = await newOrder.save()
